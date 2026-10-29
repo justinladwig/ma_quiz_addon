@@ -6,7 +6,7 @@ proposed upstream.
 ## Install
 
 1. In Home Assistant go to **Settings → Add-ons → Add-on Store**, open the ⋮ menu,
-   choose **Repositories** and add `https://github.com/justinladwig/music-assistant-quiz-addon`.
+   choose **Repositories** and add `https://github.com/justinladwig/ma_quiz_addon`.
 2. Install **Music Assistant (Quiz Test)**. Stop the official Music Assistant add-on first,
    both cannot run at the same time.
 
@@ -16,8 +16,8 @@ The add-on does not build anything on your Home Assistant device. The workflow i
 `.github/workflows/build.yml` builds the image on GitHub Actions and pushes it to
 `ghcr.io/justinladwig/music-assistant-quiz:<version>`:
 
-1. builds the frontend wheel from `justinladwig/frontend` (branch `music-quiz-title-reveal`),
-2. builds the server wheel from `justinladwig/server` (branch `music-quiz-title-reveal`),
+1. builds the frontend wheel from `justinladwig/ma_frontend` (branch `music-quiz-title-reveal`),
+2. builds the server wheel from `justinladwig/ma_server` (branch `music-quiz-title-reveal`),
 3. builds the image with the server's own `Dockerfile` and installs the custom frontend on top.
 
 The sources are set in `sources.env`.

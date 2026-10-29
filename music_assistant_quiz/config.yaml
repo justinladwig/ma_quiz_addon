@@ -2,8 +2,8 @@ name: Music Assistant (Quiz Test)
 version: 2.11.0.dev1
 slug: music_assistant_quiz
 description: Test build of Music Assistant with the Music Quiz "Title Reveal" game.
-  Built from justinladwig/server and justinladwig/frontend (branch music-quiz-title-reveal).
-url: https://github.com/justinladwig/music-assistant-quiz-addon
+  Built from justinladwig/ma_server and justinladwig/ma_frontend (branch music-quiz-title-reveal).
+url: https://github.com/justinladwig/ma_quiz_addon
 arch:
   - amd64
   - aarch64
