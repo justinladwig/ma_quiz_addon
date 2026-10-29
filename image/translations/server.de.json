@@ -1,0 +1,6 @@
+{
+  "provider.music_quiz.errors.music_quiz_guess_too_fast": "Warte kurz, bevor du erneut rätst.",
+  "provider.music_quiz.errors.music_quiz_invalid_hint_speed": "Das gewählte Hinweis-Tempo ist nicht gültig.",
+  "provider.music_quiz.errors.music_quiz_invalid_typo_tolerance": "Die gewählte Tippfehler-Toleranz ist nicht gültig.",
+  "provider.music_quiz.errors.music_quiz_too_many_attempts": "Du hast alle Versuche für diese Runde aufgebraucht."
+}

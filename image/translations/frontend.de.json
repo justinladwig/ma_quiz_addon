@@ -1,0 +1,42 @@
+{
+    "providers": {
+        "music_quiz": {
+            "game_type_title_reveal": "Titel-Raten",
+            "game_type_title_reveal_description": "Spiele einen Titel ab und tippe seinen Namen, während nach und nach Buchstaben aufgedeckt werden.",
+            "how_to_play_title_reveal_description": "Hör dir das aktuell gespielte Lied an und tippe seinen Titel ein. Mit der Zeit werden mehr Buchstaben aufgedeckt und kleine Tippfehler sind erlaubt, aber je schneller du rätst, desto mehr Punkte bekommst du.",
+            "hint_speed": "Hinweis-Tempo",
+            "hint_speed_slow": "Langsam (wenige Buchstaben)",
+            "hint_speed_normal": "Normal",
+            "hint_speed_fast": "Schnell (viele Buchstaben)",
+            "typo_tolerance": "Tippfehler-Toleranz",
+            "typo_tolerance_strict": "Streng",
+            "typo_tolerance_normal": "Normal",
+            "typo_tolerance_lenient": "Großzügig",
+            "title_reveal_mask_label": "Songtitel: {0}, noch {1} Buchstaben verdeckt",
+            "title_reveal_hints_progress": "{0} von {1} Hinweisen aufgedeckt",
+            "title_reveal_typos_allowed": "Bis zu {0} Tippfehler erlaubt",
+            "title_reveal_exact_spelling": "Genaue Schreibweise erforderlich",
+            "title_reveal_guess_label": "Songtitel",
+            "title_reveal_guess_placeholder": "Titel eingeben…",
+            "title_reveal_submit_guess": "Raten",
+            "title_reveal_attempts_left": "Noch {0} Versuche",
+            "title_reveal_your_guesses": "Deine Versuche",
+            "title_reveal_close": "Knapp daneben!",
+            "title_reveal_solved": "Richtig!",
+            "title_reveal_points": "+{0} Punkte",
+            "title_reveal_solved_players": "Erraten",
+            "title_reveal_not_solved": "Du hast den Titel in dieser Runde nicht erraten",
+            "title_reveal_first_bonus": "Erster! +{0}",
+            "title_reveal_first_bonus_result": "Als Erster erraten",
+            "title_reveal_artist_bonus_setting": "Interpretenbonus",
+            "title_reveal_artist_bonus_setting_help": "Nach dem richtigen Titel haben Spieler einen Versuch, den Interpreten für Bonuspunkte zu nennen.",
+            "title_reveal_artist_bonus_label": "Bonus: Wer ist der Interpret?",
+            "title_reveal_artist_bonus_help": "Ein Versuch für Extrapunkte.",
+            "title_reveal_artist_placeholder": "Interpret eingeben…",
+            "title_reveal_artist_skip": "Überspringen",
+            "title_reveal_artist_correct": "{0} ist richtig! +{1}",
+            "title_reveal_artist_wrong": "Leider nicht, es war {0}",
+            "title_reveal_artist_skipped": "Übersprungen, es war {0}"
+        }
+    }
+}

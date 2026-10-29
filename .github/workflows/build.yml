@@ -91,6 +91,37 @@ jobs:
               with open(path, "wb") as file_handle:
                   tomli_w.dump(pyproject, file_handle)
 
+      # The branches only carry English texts, other locales come from Lokalise after a merge.
+      # Test builds fill the gaps from image/translations; existing translations win.
+      - name: Add test translations
+        shell: python
+        run: |
+          import glob
+          import json
+          import os
+
+          def merge_missing(target, overlay):
+              for key, value in overlay.items():
+                  if isinstance(value, dict):
+                      merge_missing(target.setdefault(key, {}), value)
+                  else:
+                      target.setdefault(key, value)
+
+          targets = {
+              "frontend": "frontend/src/translations/{}.json",
+              "server": "server/music_assistant/translations/{}.json",
+          }
+          for overlay_path in sorted(glob.glob("image/translations/*.*.json")):
+              project, language, _ = os.path.basename(overlay_path).split(".")
+              target_path = targets[project].format(language)
+              with open(target_path, encoding="utf-8") as file_handle:
+                  target = json.load(file_handle)
+              with open(overlay_path, encoding="utf-8") as file_handle:
+                  merge_missing(target, json.load(file_handle))
+              with open(target_path, "w", encoding="utf-8") as file_handle:
+                  json.dump(target, file_handle, ensure_ascii=False, indent=2)
+              print(f"Merged {overlay_path} into {target_path}")
+
       - name: Build frontend wheel
         working-directory: frontend
         env:

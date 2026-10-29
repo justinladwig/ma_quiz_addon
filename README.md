@@ -22,6 +22,10 @@ The add-on does not build anything on your Home Assistant device. The workflow i
 
 The sources are set in `sources.env`.
 
+The branches only carry English texts, because Music Assistant syncs all other languages
+from Lokalise after a merge. For testing, the build fills missing keys from
+`image/translations/<frontend|server>.<language>.json`; existing translations always win.
+
 ## Publishing a new test build
 
 1. Push new commits to the server and/or frontend branch.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.11.0.dev4
+
+- German texts for Title Reveal (test builds only, see the repository README).
+
 ## 2.11.0.dev3
 
 - Title Reveal: +200 points for the first correct guess.

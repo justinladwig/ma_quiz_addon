@@ -1,5 +1,5 @@
 name: Music Assistant (Quiz Test)
-version: 2.11.0.dev3
+version: 2.11.0.dev4
 slug: music_assistant_quiz
 description: Test build of Music Assistant with the Music Quiz "Title Reveal" game.
   Built from justinladwig/ma_server and justinladwig/ma_frontend (branch music-quiz-title-reveal).
