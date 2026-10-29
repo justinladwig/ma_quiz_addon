@@ -13,6 +13,19 @@ while the song plays, small typos are accepted and earlier correct guesses score
 - This is a self-built image, so Music Assistant reports it as an unsupported installation,
   and providers that rely on the credentials bundled into official releases may not work.
 
+## Connecting Spotify (and other providers that need credentials)
+
+Official releases ship shared credentials for some providers; this build cannot. Without
+them, adding Spotify fails with "client_id not present". Use your own Spotify app instead:
+
+1. Open the [Spotify developer dashboard](https://developer.spotify.com/dashboard) and
+   create an app.
+2. Add the redirect URI `https://music-assistant.io/callback`, tick **Web API** and save.
+3. Copy the app's **Client ID** into the add-on option **Spotify client ID** and restart
+   the add-on. Then add the Spotify provider in Music Assistant as usual.
+
+Other providers can get their credentials through **Extra app variables** as `name=value`.
+
 ## Testing the quiz
 
 1. Enable the **Music Quiz** plugin under Settings → Providers.

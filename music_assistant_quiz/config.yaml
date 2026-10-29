@@ -1,5 +1,5 @@
 name: Music Assistant (Quiz Test)
-version: 2.11.0.dev1
+version: 2.11.0.dev2
 slug: music_assistant_quiz
 description: Test build of Music Assistant with the Music Quiz "Title Reveal" game.
   Built from justinladwig/ma_server and justinladwig/ma_frontend (branch music-quiz-title-reveal).
@@ -36,6 +36,11 @@ tmpfs: true
 options:
   log_level: info
   safe_mode: false
+  spotify_client_id: ""
+  app_vars: []
 schema:
   log_level: list(debug|info|warning|error)
   safe_mode: bool
+  spotify_client_id: str?
+  app_vars:
+    - str

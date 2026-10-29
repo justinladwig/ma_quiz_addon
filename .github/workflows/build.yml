@@ -8,6 +8,7 @@ on:
     paths:
       - music_assistant_quiz/config.yaml
       - sources.env
+      - image/**
       - .github/workflows/build.yml
   workflow_dispatch:
 
@@ -127,6 +128,19 @@ jobs:
           )
           with open("Dockerfile", "w", encoding="utf-8") as file_handle:
               file_handle.write(dockerfile)
+
+      # A self-built image has none of the credentials bundled into official releases, so the
+      # add-on options can supply the user's own (e.g. a Spotify client id) as app vars.
+      - name: Add app vars entrypoint to the Dockerfile
+        run: |
+          cp image/addon_app_vars.py server/addon_app_vars.py
+          cat >> server/Dockerfile <<'DOCKERFILE'
+
+          COPY addon_app_vars.py /usr/local/bin/addon_app_vars.py
+          ENV MASS_APP_VARS_FILE=/data/app_vars.json
+          ENTRYPOINT ["/usr/bin/tini", "-s", "--", "python", "/usr/local/bin/addon_app_vars.py", "--data-dir", "/data", "--cache-dir", "/data/.cache"]
+          DOCKERFILE
+          tail -5 server/Dockerfile
 
       - name: Resolve base image version
         run: |
