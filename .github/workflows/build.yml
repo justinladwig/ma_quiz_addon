@@ -1,0 +1,185 @@
+name: Build add-on image
+
+# Builds the Music Assistant image for the test add-on from the branches in sources.env and
+# pushes it as ghcr.io/<owner>/music-assistant-quiz:<version from config.yaml>.
+on:
+  push:
+    branches: [main]
+    paths:
+      - music_assistant_quiz/config.yaml
+      - sources.env
+      - .github/workflows/build.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: build-addon-image
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # arm64 is built under emulation and takes a while
+    timeout-minutes: 360
+    steps:
+      - name: Check out add-on repository
+        uses: actions/checkout@v4
+
+      - name: Read version and sources
+        run: |
+          version=$(sed -n 's/^version:[[:space:]]*//p' music_assistant_quiz/config.yaml | tr -d '"'"'"' ')
+          if [ -z "$version" ]; then
+            echo "::error::No version found in music_assistant_quiz/config.yaml"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/music-assistant-quiz" >> "$GITHUB_ENV"
+          grep -E '^[A-Z_]+=' sources.env >> "$GITHUB_ENV"
+
+      - name: Check out server
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SERVER_REPOSITORY }}
+          ref: ${{ env.SERVER_REF }}
+          path: server
+          persist-credentials: false
+
+      - name: Check out frontend
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.FRONTEND_REPOSITORY }}
+          ref: ${{ env.FRONTEND_REF }}
+          path: frontend
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: server/.python-version
+
+      - name: Install Python build tools
+        run: python3 -m pip install build tomli tomli-w
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Set package versions
+        shell: python
+        run: |
+          import os
+          import tomli
+          import tomli_w
+
+          for project in ("server", "frontend"):
+              path = os.path.join(project, "pyproject.toml")
+              with open(path, "rb") as file_handle:
+                  pyproject = tomli.load(file_handle)
+              pyproject["project"]["version"] = os.environ["VERSION"]
+              with open(path, "wb") as file_handle:
+                  tomli_w.dump(pyproject, file_handle)
+
+      - name: Build frontend wheel
+        working-directory: frontend
+        env:
+          NODE_OPTIONS: --max_old_space_size=6144
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          rm -rf dist music_assistant_frontend.egg-info
+          python3 -m build --wheel
+          unzip -Z1 dist/*.whl | grep -Fqx music_assistant_frontend/index.html
+
+      - name: Build server wheel
+        working-directory: server
+        run: |
+          python3 -m build --wheel
+          cp ../frontend/dist/music_assistant_frontend-*.whl dist/
+          ls -l dist
+
+      # The server pins the released frontend from PyPI, so the custom frontend wheel is
+      # installed over it right after the server wheel, without touching its dependencies.
+      - name: Add custom frontend to the Dockerfile
+        working-directory: server
+        shell: python
+        run: |
+          anchor = '"music-assistant@dist/music_assistant-${MASS_VERSION}-py3-none-any.whl"\n'
+          with open("Dockerfile", encoding="utf-8") as file_handle:
+              dockerfile = file_handle.read()
+          if dockerfile.count(anchor) != 1:
+              raise SystemExit("Server Dockerfile changed: install anchor not found")
+          dockerfile = dockerfile.replace(
+              anchor,
+              anchor
+              + "\nRUN uv pip install --no-cache --no-deps --reinstall "
+              + "dist/music_assistant_frontend-*.whl\n",
+          )
+          with open("Dockerfile", "w", encoding="utf-8") as file_handle:
+              file_handle.write(dockerfile)
+
+      - name: Resolve base image version
+        run: |
+          base_version=$(sed -n 's/^[[:space:]]*BASE_IMAGE_VERSION_NIGHTLY:[[:space:]]*"\(.*\)"/\1/p' \
+            server/.github/workflows/release.yml)
+          if [ -z "$base_version" ]; then
+            echo "::error::Could not read BASE_IMAGE_VERSION_NIGHTLY from the server release workflow"
+            exit 1
+          fi
+          echo "BASE_IMAGE_VERSION=$base_version" >> "$GITHUB_ENV"
+          echo "SERVER_SHA=$(git -C server rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "FRONTEND_SHA=$(git -C frontend rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ github.token }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: server
+          file: server/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ env.VERSION }}
+            ${{ env.IMAGE }}:latest
+          build-args: |
+            MASS_VERSION=${{ env.VERSION }}
+            MASS_REVISION=${{ env.SERVER_SHA }}
+            BASE_IMAGE_VERSION=${{ env.BASE_IMAGE_VERSION }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.version=${{ env.VERSION }}
+            io.music-assistant.server.revision=${{ env.SERVER_SHA }}
+            io.music-assistant.frontend.revision=${{ env.FRONTEND_SHA }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          {
+            echo "### Built ${IMAGE}:${VERSION}"
+            echo "- server: ${SERVER_REPOSITORY}@${SERVER_SHA}"
+            echo "- frontend: ${FRONTEND_REPOSITORY}@${FRONTEND_SHA}"
+            echo "- base image: ${BASE_IMAGE_VERSION}"
+          } >> "$GITHUB_STEP_SUMMARY"
