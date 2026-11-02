@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.11.0.dev6
+
+- Title Reveal: release suffixes are removed from song titles, such as
+  '- From "Top Gun"', '- Love Theme from ...', '[From The Motion Picture]', '- Mono',
+  '- Demo' or '- Recorded at ...'.
+
 ## 2.11.0.dev5
 
 - Title Reveal: the guess field is cleared when the next song starts.
