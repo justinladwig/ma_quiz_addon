@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.11.0.dev8
+
+- Code cleanup ahead of the upstream pull requests, no behaviour change.
+
 ## 2.11.0.dev7
 
 - Title Reveal: German "- Aus dem Film ..." suffixes are no longer removed.
