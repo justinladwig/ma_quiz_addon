@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.11.0.dev7
+
+- Title Reveal: German "- Aus dem Film ..." suffixes are no longer removed.
+
 ## 2.11.0.dev6
 
 - Title Reveal: release suffixes are removed from song titles, such as
