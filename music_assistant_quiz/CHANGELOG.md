@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.11.0.dev9
+
+- Title Reveal: no more list bullets in front of the players and your guesses.
+
 ## 2.11.0.dev8
 
 - Code cleanup ahead of the upstream pull requests, no behaviour change.
