@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.11.0.dev10
+
+- Rebased on the latest Music Assistant dev (server) and main (frontend), including the
+  upstream Music Quiz changes since the first test build.
+
 ## 2.11.0.dev9
 
 - Title Reveal: no more list bullets in front of the players and your guesses.
