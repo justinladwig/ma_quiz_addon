@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.11.0.dev11
+
+- Rebased on the latest Music Assistant dev (server) and main (frontend).
+- Title Reveal: guesses at or after the answer deadline are refused.
+- Title Reveal: long words in the title mask wrap instead of running off a phone screen.
+
 ## 2.11.0.dev10
 
 - Rebased on the latest Music Assistant dev (server) and main (frontend), including the
